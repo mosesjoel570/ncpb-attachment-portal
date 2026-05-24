@@ -1,0 +1,67 @@
+{% extends 'base.html' %}
+
+{% block title %}{% if action == 'approve' %}Approve{% else %}Reject{% endif %} Application - NCPB Portal{% endblock %}
+
+{% block content %}
+<div class="form-container" style="max-width: 700px;">
+    <h2 class="form-title">
+        {% if action == 'approve' %}
+            Approve Application
+        {% else %}
+            Reject Application
+        {% endif %}
+    </h2>
+    <p class="form-subtitle">{{ application.full_name }} - {{ application.institution }}</p>
+
+    <div style="background-color: #f0f7ff; padding: 15px; border-radius: 4px; margin-bottom: 20px; border-left: 4px solid #0b7a33;">
+        <strong>Applicant Details:</strong><br>
+        <small>
+            {{ application.full_name }}<br>
+            {{ application.email }}<br>
+            {{ application.phone }}<br>
+            <br>
+            <strong>Institution:</strong> {{ application.institution }}<br>
+            <strong>Course:</strong> {{ application.course }}<br>
+            <strong>Department:</strong> {{ application.proposed_department }}
+        </small>
+    </div>
+
+    <form method="POST" novalidate>
+        {% csrf_token %}
+
+        <div class="form-group">
+            <label for="admin_comments">
+                {% if action == 'approve' %}
+                    Comments (Optional)
+                {% else %}
+                    Rejection Reason (Required)
+                {% endif %}
+            </label>
+            <textarea 
+                id="admin_comments" 
+                name="admin_comments" 
+                rows="8"
+                {% if action == 'reject' %}required{% endif %}
+                placeholder="{% if action == 'approve' %}Add any additional comments for the student...{% else %}Please provide a detailed reason for rejection...{% endif %}"></textarea>
+            <small style="color: #666;">This message will be visible to the applicant.</small>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+            <button type="submit" class="btn" style="{% if action == 'approve' %}background-color: #0b7a33;{% else %}background-color: #e74c3c;{% endif %}">
+                {% if action == 'approve' %}
+                    ✓ Confirm Approval
+                {% else %}
+                    ✕ Confirm Rejection
+                {% endif %}
+            </button>
+            <a href="{% url 'view_application' application.id %}" class="btn" style="background-color: #95a5a6; text-decoration: none; display: flex; align-items: center; justify-content: center;">
+                Cancel
+            </a>
+        </div>
+    </form>
+
+    <div class="auth-link">
+        <p><a href="{% url 'admin_dashboard' %}" style="color: #0b7a33;">← Back to Dashboard</a></p>
+    </div>
+</div>
+{% endblock %}

@@ -14,35 +14,17 @@
         </div>
     {% endif %}
 
-    <form method="POST" class="login-form">
-        {% csrf_token %}
+   <form method="POST">
+    {% csrf_token %}
 
-        <div class="form-group">
-            <label for="username">Username</label>
-            <input 
-                type="text" 
-                id="username" 
-                name="username" 
-                placeholder="Enter your username"
-                required
-                autofocus
-            >
-        </div>
+    <label>Username</label>
+    <input type="text" name="username">
 
-        <div class="form-group">
-            <label for="password">Password</label>
-            <input 
-                type="password" 
-                id="password" 
-                name="password" 
-                placeholder="Enter your password"
-                required
-            >
-        </div>
+    <label>Password</label>
+    <input type="password" name="password">
 
-        <button type="submit" class="btn">Login</button>
-    </form>
-
+    <button type="submit">Login</button>
+</form>
     <div class="auth-link">
         <p>Don't have an account? <a href="{% url 'register' %}">Register here</a></p>
     </div>

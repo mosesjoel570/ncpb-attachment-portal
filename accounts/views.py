@@ -84,11 +84,11 @@ def user_login(request):
 
 @login_required(login_url='login')
 def dashboard(request):
-    """User dashboard - requires authentication"""
-    context = {
-        'user': request.user,
-    }
-    return render(request, 'dashboard.html', context)
+    """User dashboard - redirect to appropriate panel"""
+    if request.user.is_staff and request.user.is_superuser:
+        return redirect('admin_dashboard')
+    else:
+        return redirect('student_dashboard')
 
 
 def user_logout(request):

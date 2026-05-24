@@ -1,0 +1,159 @@
+{% extends 'base.html' %}
+
+{% block title %}Apply for Attachment - NCPB Portal{% endblock %}
+
+{% block content %}
+<div class="form-container" style="max-width: 700px;">
+    <h2 class="form-title">Apply for Attachment</h2>
+    <p class="form-subtitle">Complete this form to apply for an attachment opportunity</p>
+
+    {% if errors %}
+        <ul class="form-errors">
+            {% for error in errors %}
+                <li>{{ error }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+
+    <form method="POST" enctype="multipart/form-data" novalidate>
+        {% csrf_token %}
+
+        <!-- Personal Information -->
+        <fieldset style="border: 1px solid #ddd; padding: 20px; border-radius: 4px; margin-bottom: 20px;">
+            <legend style="padding: 0 10px; font-weight: bold; color: #0b7a33;">Personal Information</legend>
+            
+            <div class="form-group">
+                <label for="first_name">First Name</label>
+                <input type="text" id="first_name" name="first_name" required value="{{ request.POST.first_name }}">
+            </div>
+
+            <div class="form-group">
+                <label for="last_name">Last Name</label>
+                <input type="text" id="last_name" name="last_name" required value="{{ request.POST.last_name }}">
+            </div>
+
+            <div class="form-group">
+                <label for="phone">Phone Number</label>
+                <input type="tel" id="phone" name="phone" required value="{{ request.POST.phone }}">
+            </div>
+        </fieldset>
+
+        <!-- Education Details -->
+        <fieldset style="border: 1px solid #ddd; padding: 20px; border-radius: 4px; margin-bottom: 20px;">
+            <legend style="padding: 0 10px; font-weight: bold; color: #0b7a33;">Education Details</legend>
+            
+            <div class="form-group">
+                <label for="institution">Institution/University</label>
+                <input type="text" id="institution" name="institution" required value="{{ request.POST.institution }}" 
+                       placeholder="e.g., University of Nairobi">
+            </div>
+
+            <div class="form-group">
+                <label for="course">Course/Program</label>
+                <input type="text" id="course" name="course" required value="{{ request.POST.course }}" 
+                       placeholder="e.g., Bachelor of Agriculture">
+            </div>
+
+            <div class="form-group">
+                <label for="current_year">Current Year of Study</label>
+                <select id="current_year" name="current_year" required>
+                    <option value="">-- Select Year --</option>
+                    <option value="1" {% if request.POST.current_year == '1' %}selected{% endif %}>Year 1</option>
+                    <option value="2" {% if request.POST.current_year == '2' %}selected{% endif %}>Year 2</option>
+                    <option value="3" {% if request.POST.current_year == '3' %}selected{% endif %}>Year 3</option>
+                    <option value="4" {% if request.POST.current_year == '4' %}selected{% endif %}>Year 4</option>
+                </select>
+            </div>
+        </fieldset>
+
+        <!-- Application Details -->
+        <fieldset style="border: 1px solid #ddd; padding: 20px; border-radius: 4px; margin-bottom: 20px;">
+            <legend style="padding: 0 10px; font-weight: bold; color: #0b7a33;">Application Details</legend>
+            
+            <div class="form-group">
+                <label for="proposed_department">Proposed Department</label>
+                <input type="text" id="proposed_department" name="proposed_department" required 
+                       value="{{ request.POST.proposed_department }}" 
+                       placeholder="e.g., Supply Chain Management">
+            </div>
+
+            <div class="form-group">
+                <label for="attachment_duration_weeks">Duration (weeks)</label>
+                <input type="number" id="attachment_duration_weeks" name="attachment_duration_weeks" 
+                       value="{{ request.POST.attachment_duration_weeks|default:8 }}" min="4" max="16">
+            </div>
+
+            <div class="form-group">
+                <label for="cover_letter">Cover Letter</label>
+                <textarea id="cover_letter" name="cover_letter" rows="6" required 
+                          placeholder="Explain why you're interested in this attachment and what you hope to gain...">{{ request.POST.cover_letter }}</textarea>
+                <small style="color: #666;">Minimum 100 characters</small>
+            </div>
+        </fieldset>
+
+        <!-- File Uploads -->
+        <fieldset style="border: 1px solid #ddd; padding: 20px; border-radius: 4px; margin-bottom: 20px;">
+            <legend style="padding: 0 10px; font-weight: bold; color: #0b7a33;">Documents</legend>
+            
+            <div class="form-group">
+                <label for="cv">Curriculum Vitae (CV) *</label>
+                <input type="file" id="cv" name="cv" accept=".pdf,.doc,.docx" required>
+                <small style="color: #666;">PDF, DOC, or DOCX (Max 5MB)</small>
+            </div>
+
+            <div class="form-group">
+                <label for="academic_transcript">Academic Transcript (Optional)</label>
+                <input type="file" id="academic_transcript" name="academic_transcript" accept=".pdf,.doc,.docx">
+                <small style="color: #666;">PDF, DOC, or DOCX (Max 5MB)</small>
+            </div>
+        </fieldset>
+
+        <button type="submit" class="btn">Submit Application</button>
+    </form>
+
+    <div class="auth-link">
+        <p><a href="{% url 'student_dashboard' %}" style="color: #0b7a33;">← Back to Dashboard</a></p>
+    </div>
+</div>
+
+<style>
+fieldset {
+    border-radius: 4px !important;
+}
+
+legend {
+    font-size: 16px !important;
+}
+
+select {
+    width: 100%;
+    padding: 12px 15px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-family: inherit;
+    font-size: 14px;
+}
+
+select:focus {
+    outline: none;
+    border-color: #0b7a33;
+    box-shadow: 0 0 0 3px rgba(11, 122, 51, 0.1);
+}
+
+textarea {
+    width: 100%;
+    padding: 12px 15px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-family: inherit;
+    font-size: 14px;
+    resize: vertical;
+}
+
+textarea:focus {
+    outline: none;
+    border-color: #0b7a33;
+    box-shadow: 0 0 0 3px rgba(11, 122, 51, 0.1);
+}
+</style>
+{% endblock %}

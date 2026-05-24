@@ -1,0 +1,146 @@
+{% extends 'base.html' %}
+
+{% block title %}Application Details - NCPB Portal{% endblock %}
+
+{% block content %}
+<div style="max-width: 900px; margin: 0 auto;">
+    <div style="margin-bottom: 30px;">
+        <a href="{% if is_admin %}{% url 'admin_dashboard' %}{% else %}{% url 'student_dashboard' %}{% endif %}" 
+           style="color: #0b7a33; font-weight: bold; text-decoration: none;">
+            ← Back to Dashboard
+        </a>
+    </div>
+
+    <div class="card" style="border-top: 4px solid #0b7a33;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+            <h2>{{ application.full_name }}</h2>
+            <span style="
+                padding: 10px 20px; 
+                border-radius: 4px; 
+                color: white;
+                font-weight: bold;
+                {% if application.status == 'approved' %}
+                    background-color: #0b7a33;
+                {% elif application.status == 'rejected' %}
+                    background-color: #e74c3c;
+                {% elif application.status == 'pending' %}
+                    background-color: #f39c12;
+                {% else %}
+                    background-color: #95a5a6;
+                {% endif %}
+            ">
+                {{ application.get_status_display }}
+            </span>
+        </div>
+
+        <!-- Personal Information -->
+        <h3 style="color: #0b7a33; border-bottom: 2px solid #0b7a33; padding-bottom: 10px; margin-top: 20px;">Personal Information</h3>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin-bottom: 20px;">
+            <div>
+                <strong>Email:</strong><br>
+                {{ application.email }}
+            </div>
+            <div>
+                <strong>Phone:</strong><br>
+                {{ application.phone }}
+            </div>
+        </div>
+
+        <!-- Education Details -->
+        <h3 style="color: #0b7a33; border-bottom: 2px solid #0b7a33; padding-bottom: 10px; margin-top: 20px;">Education Details</h3>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin-bottom: 20px;">
+            <div>
+                <strong>Institution:</strong><br>
+                {{ application.institution }}
+            </div>
+            <div>
+                <strong>Course:</strong><br>
+                {{ application.course }}
+            </div>
+            <div>
+                <strong>Year of Study:</strong><br>
+                Year {{ application.current_year }}
+            </div>
+        </div>
+
+        <!-- Application Details -->
+        <h3 style="color: #0b7a33; border-bottom: 2px solid #0b7a33; padding-bottom: 10px; margin-top: 20px;">Application Details</h3>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin-bottom: 20px;">
+            <div>
+                <strong>Proposed Department:</strong><br>
+                {{ application.proposed_department }}
+            </div>
+            <div>
+                <strong>Duration:</strong><br>
+                {{ application.attachment_duration_weeks }} weeks
+            </div>
+            <div>
+                <strong>Applied On:</strong><br>
+                {{ application.applied_on|date:"M d, Y H:i" }}
+            </div>
+        </div>
+
+        <!-- Cover Letter -->
+        <h3 style="color: #0b7a33; border-bottom: 2px solid #0b7a33; padding-bottom: 10px; margin-top: 20px;">Cover Letter</h3>
+        <p style="background-color: #f8f9fa; padding: 15px; border-radius: 4px; line-height: 1.8;">
+            {{ application.cover_letter|linebreaks }}
+        </p>
+
+        <!-- Documents -->
+        <h3 style="color: #0b7a33; border-bottom: 2px solid #0b7a33; padding-bottom: 10px; margin-top: 20px;">Documents</h3>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin-bottom: 20px;">
+            {% if application.cv %}
+            <div style="background-color: #f0f7ff; padding: 15px; border-radius: 4px;">
+                <strong>CV:</strong><br>
+                <a href="{{ application.cv.url }}" target="_blank" style="color: #0b7a33; font-weight: bold;">
+                    📄 Download CV
+                </a>
+            </div>
+            {% endif %}
+            
+            {% if application.academic_transcript %}
+            <div style="background-color: #f0f7ff; padding: 15px; border-radius: 4px;">
+                <strong>Academic Transcript:</strong><br>
+                <a href="{{ application.academic_transcript.url }}" target="_blank" style="color: #0b7a33; font-weight: bold;">
+                    📄 Download Transcript
+                </a>
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- Admin Comments (if exists) -->
+        {% if application.admin_comments %}
+        <h3 style="color: #0b7a33; border-bottom: 2px solid #0b7a33; padding-bottom: 10px; margin-top: 20px;">Admin Comments</h3>
+        <div style="background-color: #fff3cd; padding: 15px; border-radius: 4px; border-left: 4px solid #f39c12; margin-bottom: 20px;">
+            <p style="margin: 0;">{{ application.admin_comments|linebreaks }}</p>
+            <small style="color: #666; margin-top: 10px; display: block;">
+                Decision made on: {{ application.decision_date|date:"M d, Y H:i" }} by {{ application.approved_by.get_full_name|default:application.approved_by.username }}
+            </small>
+        </div>
+        {% endif %}
+
+        <!-- Admin Action Buttons -->
+        {% if is_admin and application.status == 'pending' %}
+        <div style="margin-top: 30px; display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px;">
+            <a href="{% url 'approve_application' application.id %}" class="btn" style="background-color: #0b7a33;">
+                ✓ Approve Application
+            </a>
+            <a href="{% url 'reject_application' application.id %}" class="btn" style="background-color: #e74c3c;">
+                ✕ Reject Application
+            </a>
+        </div>
+        {% endif %}
+
+        <!-- Student Action Button -->
+        {% if not is_admin and application.status == 'pending' %}
+        <div style="margin-top: 30px;">
+            <a href="{% url 'withdraw_application' application.id %}" 
+               class="btn" style="background-color: #e74c3c;"
+               onclick="return confirm('Are you sure you want to withdraw this application?');">
+                Withdraw Application
+            </a>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,104 @@
+{% extends 'base.html' %}
+
+{% block title %}Student Dashboard - NCPB Attachment Portal{% endblock %}
+
+{% block content %}
+<div class="dashboard-header">
+    <h1>Student Dashboard</h1>
+    <p>Manage your attachment applications</p>
+</div>
+
+<!-- Statistics -->
+<div class="dashboard-grid">
+    <div class="card">
+        <div class="card-number">{{ total_apps }}</div>
+        <h3>Total Applications</h3>
+        <p>Total number of applications you've submitted</p>
+    </div>
+
+    <div class="card">
+        <div class="card-number" style="color: #f39c12;">{{ pending }}</div>
+        <h3>Pending Review</h3>
+        <p>Waiting for admin review</p>
+    </div>
+
+    <div class="card">
+        <div class="card-number" style="color: #0b7a33;">{{ approved }}</div>
+        <h3>Approved</h3>
+        <p>Successfully approved applications</p>
+    </div>
+
+    <div class="card">
+        <div class="card-number" style="color: #e74c3c;">{{ rejected }}</div>
+        <h3>Rejected</h3>
+        <p>Applications that were rejected</p>
+    </div>
+</div>
+
+<!-- Action Buttons -->
+<div style="margin: 40px 0; text-align: center;">
+    <a href="{% url 'apply_attachment' %}" class="btn" style="display: inline-block; width: auto;">
+        ✨ Submit New Application
+    </a>
+</div>
+
+<!-- Applications List -->
+<section class="hero">
+    <h2>Your Applications</h2>
+    
+    {% if applications %}
+        <table>
+            <thead>
+                <tr>
+                    <th>Institution</th>
+                    <th>Course</th>
+                    <th>Department</th>
+                    <th>Status</th>
+                    <th>Applied On</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for app in applications %}
+                <tr>
+                    <td>{{ app.institution }}</td>
+                    <td>{{ app.course }}</td>
+                    <td>{{ app.proposed_department }}</td>
+                    <td>
+                        <span style="
+                            padding: 5px 10px; 
+                            border-radius: 4px; 
+                            color: white;
+                            font-weight: bold;
+                            {% if app.status == 'approved' %}
+                                background-color: #0b7a33;
+                            {% elif app.status == 'rejected' %}
+                                background-color: #e74c3c;
+                            {% elif app.status == 'pending' %}
+                                background-color: #f39c12;
+                            {% else %}
+                                background-color: #95a5a6;
+                            {% endif %}
+                        ">
+                            {{ app.get_status_display }}
+                        </span>
+                    </td>
+                    <td>{{ app.applied_on|date:"M d, Y" }}</td>
+                    <td>
+                        <a href="{% url 'view_application' app.id %}" style="color: #0b7a33; text-decoration: none; font-weight: bold;">View</a>
+                        {% if app.status == 'pending' %}
+                            | <a href="{% url 'withdraw_application' app.id %}" style="color: #e74c3c; text-decoration: none; font-weight: bold;" onclick="return confirm('Are you sure?');">Withdraw</a>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p style="text-align: center; color: #666; font-size: 16px;">
+            You haven't submitted any applications yet.
+            <a href="{% url 'apply_attachment' %}" style="color: #0b7a33; font-weight: bold;">Submit your first application</a>
+        </p>
+    {% endif %}
+</section>
+{% endblock %}
