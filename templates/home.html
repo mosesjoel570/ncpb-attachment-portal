@@ -1,0 +1,64 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Home - NCPB Attachment Portal{% endblock %}
+
+{% block content %}
+<section class="hero">
+    <h1>Apply for Attachment Opportunities Online</h1>
+    <p>
+        Welcome to the NCPB Online Attachment Portal.
+        Register, apply, and track your attachment applications online with ease.
+    </p>
+    {% if user.is_authenticated %}
+        <a href="{% url 'dashboard' %}" class="btn">Go to Dashboard</a>
+    {% else %}
+        <a href="{% url 'register' %}" class="btn">Apply Now</a>
+    {% endif %}
+</section>
+
+<div class="dashboard-grid" style="margin-top: 40px;">
+    <div class="card">
+        <h3>Easy Application Process</h3>
+        <p>Apply for attachment opportunities in a few simple steps. Our streamlined process makes it quick and easy to submit your applications.</p>
+    </div>
+
+    <div class="card">
+        <h3>Track Your Status</h3>
+        <p>Monitor your applications in real-time. Receive updates and notifications about your attachment applications status.</p>
+    </div>
+
+    <div class="card">
+        <h3>Professional Management</h3>
+        <p>Manage all your opportunities in one central dashboard. Organize and keep track of all your NCPB attachment journey.</p>
+    </div>
+</div>
+
+<section class="hero" style="margin-top: 40px;">
+    <h2>About NCPB Attachment Program</h2>
+    <p>
+        The National Cereals and Produce Board (NCPB) offers attachment programs to provide practical experience 
+        in agricultural supply chain management. Our program is designed for students and graduates seeking to gain 
+        industry experience while contributing to food security in Kenya.
+    </p>
+    <p style="margin-top: 20px;">
+        <strong>Current Attachment Opportunities:</strong> Check back regularly for new opportunities or 
+        {% if user.is_authenticated %}
+            <a href="{% url 'dashboard' %}">visit your dashboard</a>
+        {% else %}
+            <a href="{% url 'register' %}" style="color: #1e5a8e; font-weight: bold;">create an account</a>
+        {% endif %}
+        to start applying.
+    </p>
+</section>
+{% endblock %}
+
+<footer class="footer">
+    <div class="footer-content">
+        <img src="{% static 'images/kebs.png' %}" alt="KEBS Logo" height="80">
+
+        <p>
+            National Cereals and Produce Board (NCPB) Online Attachment Portal
+        </p>
+    </div>
+</footer>

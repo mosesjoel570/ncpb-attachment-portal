@@ -1,0 +1,68 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}NCPB Online Attachment Portal{% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body>
+    <header class="header">
+        <div class="container">
+            <div class="logo-section">
+                <img src="{% static 'images/logo.svg' %}" alt="NCPB Logo" class="logo-image">
+                <div class="header-text">
+                    <h2>National Cereals and Produce Board</h2>
+                    <p>Online Attachment Portal</p>
+                </div>
+            </div>
+            <nav class="navbar">
+                <ul class="nav-links">
+                    <li><a href="{% url 'home' %}" class="nav-link">Home</a></li>
+                    {% if user.is_authenticated %}
+                        <li><a href="{% url 'dashboard' %}" class="nav-link">Dashboard</a></li>
+                        <li><span class="nav-text">Welcome, {{ user.first_name|default:user.username }}!</span></li>
+                        <li><a href="{% url 'logout' %}" class="nav-link logout-btn">Logout</a></li>
+                    {% else %}
+                        <li><a href="{% url 'login' %}" class="nav-link">Login</a></li>
+                        <li><a href="{% url 'register' %}" class="nav-link register-btn">Register</a></li>
+                    {% endif %}
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <main class="main-content">
+        <div class="container">
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="alert alert-{{ message.tags }}">
+                        {{ message }}
+                        <button type="button" class="close-btn">&times;</button>
+                    </div>
+                {% endfor %}
+            {% endif %}
+
+            {% block content %}{% endblock %}
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2026 National Cereals and Produce Board. All rights reserved.</p>
+            <p>Contact: <a href="mailto:info@ncpb.co.ke">info@ncpb.co.ke</a> | Phone: +254 (0) 729559759</p>
+        </div>
+    </footer>
+
+    <script>
+        // Close alert messages
+        document.querySelectorAll('.close-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                this.parentElement.style.display = 'none';
+            });
+        });
+    </script>
+</body>
+</html>
